@@ -140,7 +140,7 @@ map = (function () {
                 var url = 'https://www.openstreetmap.org/edit?';
 
                 if (scene.selection.feature && scene.selection.feature.properties.id) {
-                    url += 'way=' + scene.selection.feature.properties.id;
+                    url += 'node=' + scene.selection.feature.properties.id;
                 }
 
                 // Ideally, we'd know the feature's center.lat and center.lng, but we only know the scene's, so skip this for now
