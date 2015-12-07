@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Create some airport polygons</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load("visualization", "1", {packages:["corechart"]});
+      google.setOnLoadCallback(drawChart);
+      function drawChart() {
+
+        var data = google.visualization.arrayToDataTable([
+          ['Polygon or Not', 'p_airports'],
+          ['Airports without Polygons', 69],
+          ['Airport with Polygons',  10]
+        ]);
+
+        var options = {
+          title: 'The Bay Area, Airports without Polygons',
+          colors: ['aqua', 'grey']
+        };
+        
+        var formatter1 = new google.visualization.NumberFormat({pattern:'###,###'});
+        formatter1.format(data, 1);
+        
+        var chart = new google.visualization.PieChart(document.getElementById('airport_polygon_piechart'));
+
+        chart.draw(data, options);
+      }
+      window.addEventListener('resize', drawChart);
+    </script>
+
+    
+  </head>
+  <body>
+	<div id="airport_polygon_piechart" style="width: 570px; height: 300px;"></div>
+  </body>
+</html>
