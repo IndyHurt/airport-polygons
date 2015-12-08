@@ -449,7 +449,7 @@ textures:
 sources:
     osm:
         type: TopoJSONTiles
-        url:  //vector.mapzen.com/osm/all/{z}/{x}/{y}.topojson?api_key=vector-tiles-EZxLF3I
+        url:  //vector.mapzen.com/osm/all/{z}/{x}/{y}.topojson?api_key=vector-tiles-WwLN6hw
 
 camera:
     type: isometric
