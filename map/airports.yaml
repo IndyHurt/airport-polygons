@@ -4,7 +4,7 @@
 cameras:
     camera1:
         type: perspective
-        position: [-122.319873, 37.710885, 10] # lon/lat for the SF Bay Area at zoom 10
+        position: [-122.456869, 38.223630, 13] # lon/lat for Sonoma, CA at zoom 13
 
 labels-global:
     - &text_visible_continent         true
