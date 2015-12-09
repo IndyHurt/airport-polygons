@@ -28,10 +28,10 @@ map = (function () {
 
     // normal case, eg: http://tangrams.github.io/nameless-maps/?roads#4/0/0
     var url_search = window.location.search.slice(1).split('/')[0];
-    console.log('url_search', url_search);
+    // console.log('url_search', url_search);
     if (url_search.length > 0) {
         style_file = url_search + ".yaml";
-        console.log('style_file', style_file);
+        // console.log('style_file', style_file);
     }
 
     /*** Map ***/
@@ -49,6 +49,7 @@ map = (function () {
     window.layer = layer;
     var scene = layer.scene;
     window.scene = scene;
+    var latlng = [];
 
     // setView expects format ([lat, long], zoom)
     var hash = new L.Hash(map);
@@ -121,6 +122,8 @@ map = (function () {
 // 
 //         });
 
+        map.addEventListener('mousemove', function (e) { latlng = [e.latlng.lat, e.latlng.lng]; });
+
         // feature edit popup
         map.getContainer().addEventListener('mousemove', function (event) {
             picking = true;
@@ -139,19 +142,13 @@ map = (function () {
                 // generate osm edit link
                 var url = 'https://www.openstreetmap.org/edit?';
 
+                var position = '19' + '/' + latlng[0] + '/' + latlng[1];
+
                 if (scene.selection.feature && scene.selection.feature.properties.id) {
-                    url += 'node=' + scene.selection.feature.properties.id;
+                    url += 'node=' + scene.selection.feature.properties.id + '#map=' + position;
                 }
 
-                // Ideally, we'd know the feature's center.lat and center.lng, but we only know the scene's, so skip this for now
-                if (scene.center) {
-                    var center = '19' + '/' + scene.center.lat + '/' + scene.center.lng;
-                }
-                // We want to zoom into the feature at a high zoom, but that's broken
-                // url += '#map=' + center;
-                // So we ignore this for now and hope OSM.org does the right thing
-
-                var josmUrl = 'http://www.openstreetmap.org/edit?editor=remote#map='+center;
+                var josmUrl = 'http://www.openstreetmap.org/edit?editor=remote#map='+position;
                 
                 // extra label information - currently unused
                 var label = '';
@@ -167,10 +164,12 @@ map = (function () {
 
                 popup.style.left = (pixel.x + 0) + 'px';
                 popup.style.top = (pixel.y + 0) + 'px';
-                if ( scene.selection.feature.properties.area == undefined && scene.selection.feature.properties.kind == 'hospital' ) {
+                
+                if ( scene.selection.feature.properties.kind == 'aerodrome' && !scene.selection.feature.properties.area ) 
+                {
 	                popup.style.visibility = 'visible';
 	            }
-                popup.innerHTML = '<span class="labelInner">' + 'You found a hospital that needs an area!' + '</span><br>';
+                popup.innerHTML = '<span class="labelInner">' + 'You found an airport that needs help!' + '</span><br>';
                 popup.innerHTML += '<span class="labelInner">' + '<a target="_blank" href="' + url + '">Edit with iD ➹</a>' + '</span><br>';
                 popup.innerHTML += '<span class="labelInner">' + '<a target="_blank" href="' + josmUrl + '">Edit with JOSM ➹</a>' + '</span><br>';
             });
@@ -196,7 +195,7 @@ map = (function () {
         // Scene initialized
         layer.on('init', function() {
             initFeatureSelection();
-            console.log('1 map loc:', map_start_location, '\ncamera pos:', scene.camera.position);
+            //console.log('1 map loc:', map_start_location, '\ncamera pos:', scene.camera.position);
             if (defaultpos && typeof scene.camera.position != "undefined") {
                 map_start_location = [scene.camera.position[1], scene.camera.position[0], scene.camera.position[2]]
             }
