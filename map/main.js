@@ -170,8 +170,8 @@ map = (function () {
 	                popup.style.visibility = 'visible';
 	            }
                 popup.innerHTML = '<span class="labelInner">' + 'You found an airport that needs help!' + '</span><br>';
-                popup.innerHTML += '<span class="labelInner">' + '<a target="_blank" href="' + url + '" onclick="trackOutboundLink("' + url + '", residential_buildings, iD); return false;">Edit with iD ➹</a>' + '</span><br>';
-                popup.innerHTML += '<span class="labelInner">' + '<a target="_blank" href="' + josmUrl + '" onclick="trackOutboundLink("' + josmUrl + '", residential_buildings, JOSM); return false;">Edit with JOSM ➹</a>' + '</span><br>';
+                popup.innerHTML += '<span class="labelInner">' + '<a target="_blank" href="' + url + '" onclick="trackOutboundLink("' + url + '", editing_airports, iD); return false;">Edit with iD ➹</a>' + '</span><br>';
+                popup.innerHTML += '<span class="labelInner">' + '<a target="_blank" href="' + josmUrl + '" onclick="trackOutboundLink("' + josmUrl + '", editing_airports, JOSM); return false;">Edit with JOSM ➹</a>' + '</span><br>';
             });
         });
 
@@ -179,8 +179,39 @@ map = (function () {
             info.style.visibility = 'hidden';
             popup.style.visibility = 'hidden';
         });
-
     }
+
+	function long2tile(lon,zoom) { return (Math.floor((lon+180)/360*Math.pow(2,zoom))); }
+	function lat2tile(lat,zoom)  { return (Math.floor((1-Math.log(Math.tan(lat*Math.PI/180) + 1/Math.cos(lat*Math.PI/180))/Math.PI)/2 *Math.pow(2,zoom))); }    
+
+    /***** Render loop *****/
+	
+	function addGUI () {
+		// Link to edit in OSM - hold 'e' and click
+		function onMapClick(e) {
+			if (key.shift) {
+				var url = 'https://www.openstreetmap.org/edit?';
+
+				if (scene.selection.feature && scene.selection.feature.id) {
+					url += 'way=' + scene.selection.feature.id;
+				}
+
+				if (scene.center) {
+					url += '#map=' + scene.baseZoom(scene.zoom) + '/' + scene.center.lat + '/' + scene.center.lng;
+				}
+
+				window.open(url, '_blank');
+			}
+
+ 			if (key.command) {
+				var url = 'http://vector.mapzen.com/osm/all/' + scene.tile_zoom + '/' + long2tile(e.latlng.lng,scene.tile_zoom)  + '/' + lat2tile(e.latlng.lat,scene.tile_zoom) + '.topojson?api_key=vector-tiles-HqUVidw';
+				window.open(url, '_blank');
+				//console.log( e );
+			}
+		}
+
+		map.on('click', onMapClick);		
+	}
 
     function inIframe () {
         try {
@@ -194,6 +225,7 @@ map = (function () {
     window.addEventListener('load', function () {
         // Scene initialized
         layer.on('init', function() {
+	        addGUI();
             initFeatureSelection();
             //console.log('1 map loc:', map_start_location, '\ncamera pos:', scene.camera.position);
             if (defaultpos && typeof scene.camera.position != "undefined") {
@@ -210,4 +242,3 @@ map = (function () {
     return map;
 
 }());
-
