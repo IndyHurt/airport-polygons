@@ -713,7 +713,7 @@ layers:
                     visible: true
                     priority: 1
                 text:
-                    offset: [[13,6px],[16,8px],[19,10px]]
+                    offset: [[13, [0, 6px]], [16, [0, 8px]], [18, [0, 10px]]] # offset tracks alongside icon size (half icon height)
                     priority: 2
                     anchor: bottom
                     font:
